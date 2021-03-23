@@ -11,23 +11,13 @@
  const axios = require('axios')
  
  const getIpfsHash = async (ipfsHash) => {
- 
      return await axios.get('https://cloudflare-ipfs.com/ipfs/' + ipfsHash).then(res => res.data)
-     /*    const nftDetailJson = await nftDetails.json();
-    
-        const nftName = nftDetailJson.name;
-        const nftDescription = nftDetailJson.description;
-        const nftCreators = nftDetailJson.creators.join(', ');
-        const nftArtifact = `https://cloudflare-ipfs.com/ipfs/${nftDetailJson.formats[0].uri.toString().slice(7)}`;
-        const nftArtifactType = nftDetailJson.formats[0].mimeType.toString();
-    
-        return { name: nftName, description: nftDescription, creators: nftCreators, artifactUrl: nftArtifact, artifactType: nftArtifactType }; */
  }
  
  const pin = async(hash)=>{
      const { stdout, stderr } = await exec(`ipfs pin add ${hash}`);
      if(stderr) console.error(`error pinnng ${hash}`, stderr);
-     console.log(stdout);
+     if(stdout) console.log(stdout);
  }
  
  const tz = process.argv[2];
@@ -56,12 +46,11 @@
      axios.get("https://raw.githubusercontent.com/hicetnunc2000/hicetnunc/main/filters/w.json").catch(() => {
          return { data: [] }
      })])
-     oblock = blocklists[0].data
-     wblock = blocklists[1].data
+     const oblock = blocklists[0].data
+     const wblock = blocklists[1].data
      const collection = await conseilUtil.getCollectionForAddress(tz)
      const creations = await conseilUtil.getArtisticOutputForAddress(tz)
-     var arr = [...collection, ...creations]
-     var arr = await Promise.all(arr.map(async e => {
+     const arr = await Promise.all([...collection, ...creations].map(async e => {
          e.token_info = await getIpfsHash(e.ipfsHash)
  
          if (e.piece != undefined) {
@@ -73,14 +62,12 @@
          return e
      }))
  
-     console.log('prefilt', arr.length)
- 
      const filtered = SanitiseOBJKT(arr)
          // filters objkt's out if they are flagges
          .filter((i) => !oblock.includes(i.token_id))
          // filter objkt's out if they're from flagged wallets
          .filter((i) => !wblock.includes(i.token_info.creators[0]))
-     console.log('postfilt', filtered.length)
+     console.log(`filtered ${arr.length} items to ${filtered.length} items using blocklist`)
      for(let i=0;i<arr.length;i++){
          await pin(arr[i].ipfsHash);
      }
