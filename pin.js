@@ -1,3 +1,10 @@
+/**
+ * if you are running an IPFS node, 
+ * you can pin the collection/creations of any tz address like so
+ * 
+ * node pin.js tz1iyFi4WjSttoja7Vi1EJYMEKKSebQyMkF9
+ */
+
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);
 const conseilUtil = require('./conseilUtil');
