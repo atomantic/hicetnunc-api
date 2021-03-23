@@ -14,7 +14,7 @@ const conseilUtil = require('./conseilUtil');
 const pin = async(hash)=>{
     const { stdout, stderr } = await exec(`ipfs pin add ${hash}`);
     if(stderr) console.error(`error pinnng ${hash}`, stderr);
-    console.log(stdout);
+    if(stdout) console.log(stdout);
 }
 
 const getIpfsHash = async (ipfsHash) => {
