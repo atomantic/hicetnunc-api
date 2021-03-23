@@ -6,6 +6,7 @@
  * node pin.js tz1iyFi4WjSttoja7Vi1EJYMEKKSebQyMkF9
  */
 
+const axios = require('axios');
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);
 const conseilUtil = require('./conseilUtil');
